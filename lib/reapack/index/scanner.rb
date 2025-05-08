@@ -164,7 +164,17 @@ class ReaPack::Index
               base_file = File.basename file
               target = File.join line.target, base_file
             else
-              target = line.target
+              sub_file = file.gsub /#{@pkg.category}\//, ''
+              puts sub_file
+              substitutions = {
+                '$path'    => sub_file,
+                '$commit'  => @index.commit || 'master',
+                '$version' => @ver.name,
+                '$package' => @pkg.path,
+              }
+              target = line.target.gsub /\$\w+/, substitutions
+
+              # target = line.target
             end
 
             expanded = ReaPack::Index.expand target, @pkg.category
